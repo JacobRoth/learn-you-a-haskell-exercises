@@ -5,13 +5,13 @@ module DistanceConversions
 ) where
 
 -- Define yards to feet
-yardsToFeet ::  Float -> Float
-yardsToFeet y = undefined
+yardsToFeet ::  Floating a => a -> a
+yardsToFeet = (3*)
 
 -- Define feet to inches
-feetToInches :: Float -> Float
-feetToInches f = undefined
+feetToInches :: Floating a => a -> a
+feetToInches = (12*)
 
 -- Define inches to centimetres
-inchesToCentimetres :: Float -> Float
-inchesToCentimetres i = undefined
+inchesToCentimetres :: Floating a => a -> a
+inchesToCentimetres = (2.54*)

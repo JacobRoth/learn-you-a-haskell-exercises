@@ -3,14 +3,19 @@
 -- this will take the function for converting a distance, and an area to convert
 -- using the functions defined in the DistanceConversions module
 -- Example areaConv inchesToCentimetres 9 = 58.0644
+import DistanceConversions
 
 areaConv :: (Float -> Float) -> Float -> Float
-areaConv linearConversion area = undefined
+areaConv linearConversion area = (linearConversion $ sqrt area)^2
 
 -- define a function for converting square inches into square centimetres
 sqInToSqCm :: Float -> Float
-sqInToSqCm = undefined
+sqInToSqCm = areaConv inchesToCentimetres
 
 -- define a function for converting square chains (22 yards) to square metres
 sqChainsToSqM :: Float -> Float
-sqChainsToSqM = undefined
+sqChainsToSqM = areaConv chainsToMetres
+    where
+        chainsToMetres chains = yards * 0.9144
+            where
+                (chains*22)
