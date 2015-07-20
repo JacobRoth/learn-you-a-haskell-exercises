@@ -12,13 +12,21 @@
  - Uncomment the following declarations to complete the implementation, and provide an implementation for instance Show Card
  -}
 
---data Suit = 
---data Digit = 
---data Card = 
+data Suit = Hearts | Diamonds | Clubs | Spades 
+        deriving (Eq, Show)
+data Face = Jack | Queen | King | Ace
+        deriving (Eq, Ord, Enum, Show)
+data Digit = NumberCard Int | FaceCard Face
+        deriving (Show,Eq)
+data Card = Card Digit Suit
+        deriving (Show,Eq)
 
 -- We should be able to provide a function which returns the higher ranked card:
 betterCard :: Card -> Card -> Card
-betterCard x y = undefined
+betterCard x@(Card (NumberCard _) _) y@(Card (FaceCard _) _ ) = y
+betterCard x@(Card (NumberCard xnum) _) y@(Card (NumberCard ynum) _ ) = if (ynum>xnum) then y else x
+betterCard x@(Card (FaceCard xface) _) y@(Card (FaceCard yface) _ ) = if (yface>xface) then y else x
+betterCard x y = betterCard y x -- if  nothing matches flip the order and try again
 
 -- Here is a new Typeclass, which represents some kind of playing hand in a game.
 -- It returns True for a "winning hand", depending on the rules for the type of class we are playing with
@@ -27,13 +35,14 @@ class Hand a where
 
 -- Implement Hand for Card, where play returns true if the list contains the Ace of Spades
 instance Hand Card where
-    play c = undefined
+    play = (Card (FaceCard Ace) Spades) `elem` 
+
 
 -- Create a new Coin type
---data Coin = 
+type Coin = Bool
 
 -- Implement Hand for Coin, where play returns true if there are ten heads in a row in the list
 instance Hand Coin where
-	play c =  undefined
+	play c = (take 10 c) == (replicate 10 (True))
 
 -- Have a play with implementing Hand for some other types, for instance Int and Bool
