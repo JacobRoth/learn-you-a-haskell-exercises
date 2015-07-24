@@ -23,3 +23,5 @@ doListOfIO [] = return ()
 doListOfIO (x:xs) = do
         x
         doListOfIO xs
+
+main = printList "ABCDefg"
