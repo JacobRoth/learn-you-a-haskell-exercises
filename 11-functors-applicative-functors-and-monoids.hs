@@ -5,10 +5,17 @@ import Data.Monoid
 data List a = Empty | Value a (List a) deriving (Show)
 
 -- Make the list a Functor
+instance Functor List where
+        fmap f Empty = Empty
+        fmap f (Value x lst) = Value (f x) (fmap f lst)
+
 
 -- Write a function which appends one list on to another
 combineLists:: List a -> List a -> List a
-combineLists a b = undefined
+combineLists Empty b = b
+combineLists a Empty = a
+combineLists (Value x Empty) lst = (Value x lst) -- this is the cons.
+combineLists (Value x lst1) lst2 = Value x (combineLists lst1 lst2)
 
 -- Make our list a Monoid
 
