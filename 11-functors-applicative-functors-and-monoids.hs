@@ -21,13 +21,25 @@ combineLists (Value x lst1) lst2 = Value x (combineLists lst1 lst2)
 
 -- Make our list an Applicative
 
+instance Applicative List where
+    pure f = Value f Empty
+    Empty <*> _ = Empty
+    _ <*> Empty = Empty
+    (Value f fs) <*> lst = combineLists (fmap f lst) (fs <*> lst)
+
 -- Make sure that the List obeys the laws for Applicative and Monoid
 
 -- Create some lists of numbers of different lengths such as:
 twoValueList = Value 10 $ Value 20 Empty
+oneValueList = Value 1 Empty
+emptyList = Empty
 
 -- Use <$> on the lists with a single-parameter function, such as:
 plusTwo = (+2)
+
+s1 = plusTwo <$> emptyList
+s2 = plusTwo <$> oneValueList
+s3 = plusTwo <$> twoValueList
 
 -- Use <$> and <*> on the lists with a binary function
 
