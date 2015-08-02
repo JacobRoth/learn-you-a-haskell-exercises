@@ -19,6 +19,10 @@ combineLists (Value x lst1) lst2 = Value x (combineLists lst1 lst2)
 
 -- Make our list a Monoid
 
+instance Monoid (List a) where
+    mempty = Empty
+    mappend = combineLists
+
 -- Make our list an Applicative
 
 instance Applicative List where
