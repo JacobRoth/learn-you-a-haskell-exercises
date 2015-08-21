@@ -1,4 +1,8 @@
-{-
+import Data.List
+import Data.Monoid
+import Control.Monad.Writer
+
+{- 
  - We are going to write a binary search algorithm, which returns a Writer, so we can record the intermediate steps.
  -
  - The signature of our binary search is as follows:
@@ -29,12 +33,40 @@
  -}
 
 describe :: (Show a, Eq a, Ord a) => a -> a -> [String]
-describe x y = undefined
+describe x y
+    | x == y = [(show x) ++ " is equal to " ++ (show y)]
+    | x >  y = [(show x) ++ " is greater than " ++ (show y)]
+    | x <  y = [(show x) ++ " is less than " ++ (show y)]
 
-binarySearch :: (Show a, Ord a, Eq a, Monoid b) => (a -> a -> b) -> a -> [a] -> Writer b Bool
-binarySearch = undefined
 
-{-
+binarySearch :: (Show a, Ord a, Eq a, Monoid b) => (a -> a -> b) -> a -> [a] -> Writer b Bool -- requires the list be already sorted
+binarySearch f x lst = binarySearchHelper f x $ sort lst 
+    where
+        binarySearchHelper :: (Show a, Ord a, Eq a, Monoid b) => (a -> a -> b) -> a -> [a] -> Writer b Bool -- requires the list be already sorted
+        binarySearchHelper _ _ [] = writer (False, mempty) 
+        binarySearchHelper explainer targetValue xs = do
+            let (pre,val,post) = binarySplit xs
+            tell ( explainer val targetValue ) 
+            -- tell ["So I did this thing"]
+            case (val `compare` targetValue) of
+                EQ -> return True
+                GT -> binarySearchHelper explainer targetValue pre
+                LT -> binarySearchHelper explainer targetValue post
+
+binarySplit :: (Eq a, Ord a) => [a] -> ([a],a,[a]) -- take a list and split it into front part, back part, and middle value. List must be non-empty.
+binarySplit [] = error "Tried to binary-split an empty list"
+binarySplit (x:xs) = recur ([],x,xs)
+    where
+        recur (pre,val,post)
+            | (length pre) >= (length post) = (pre,val,post)
+            | post == []                    = (pre,val,post)
+            | otherwise                     = recur (pre++[val],head post, tail post)
+
+{- 
  - Investigate what other functions instead of describe can be passed to the binary search.
  - Is it possible to provide a function, so that when we do the binary search we can return a count of how many comparisons the algorithm took?
+ -
  -}
+
+binarySearchCount :: (Show a, Ord a, Eq a) => a -> [a] -> Writer (Sum Integer) Bool -- requires the list be already sorted
+binarySearchCount = binarySearch (\_ _ -> Sum 1)
